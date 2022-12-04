@@ -69,7 +69,7 @@ function isValidSet(o){
 	} return isValid;
 }
 
-const dim = 250; 
+const dim = 500; 
 let bitBoard = "";
 bitBoard = bitBoard.concat("P".repeat(dim*dim)); //set entire board to white
 
@@ -110,7 +110,8 @@ io.on('connection', function(socket) {
 	socket.emit('message', {
 		x: -1,
 		y: -1,
-		color: bitBoard	
+		color: bitBoard,
+        dim
 	});
 	console.log('Done sending initial board...');
 

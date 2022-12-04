@@ -72,11 +72,11 @@
 			var socket;
 
 			$(function(){
-				var loading = true;
-				let dim = 250;
-				var color = 'A';
-				var prevX = -1;
-				var prevY = -1;
+				let loading = true;
+				let dim = 0;
+				let color = 'A';
+				let prevX = -1;
+				let prevY = -1;
 
 				function getRGB(c) {
 					switch (c) {
@@ -128,20 +128,28 @@
 					}
 				);
 				socket.on('message', 
-					function(event) {
-						var o = event;
-						console.log(o);
-						var context = document.getElementById('canvas').getContext('2d');
-						if(o.x == -1 && o.y == -1){
-							for(let i = 0; i < o.color.length; i++){
-								context.fillStyle =  getRGB(o.color.charAt(i));
+					function(e) {
+						console.log(e);
+						const context = document.getElementById('canvas').getContext('2d');
+						// on initial message from server
+						if(e.x == -1 && e.y == -1){
+							// server sets dimensions
+							dim = e.dim; 
+							document.getElementById("canvas").width = dim;
+							document.getElementById("canvas").height = dim;
+
+							// fill colour with default colour
+							for(let i = 0; i < e.color.length; i++){
+								context.fillStyle =  getRGB(e.color.charAt(i));
 								context.fillRect(i/dim, i%dim, 1, 1);
 							}
+
+							// remove loading sign
 							loading = false;
 							document.getElementById("loadingMsg").style.display = "none";
 						} else {
-							context.fillStyle = getRGB(o.color);
-							context.fillRect(o.x, o.y, 1, 1);
+							context.fillStyle = getRGB(e.color);
+							context.fillRect(e.x, e.y, 1, 1);
 						}
 					}
 				);
