@@ -64,7 +64,9 @@
 					}
 				}
 
-				line.forEach(({x,y}) => socket.emit('message', {x, y, color}))
+				socket.emit('line', {line: JSON.stringify(line), color})
+
+				// line.forEach(({x,y}) => socket.emit('message', {x, y, color}))
 			}
 	
 			var socket;
@@ -183,18 +185,6 @@
 					}
 				})
 
-				$('#setForm').submit(function( event ) {
-					// TODO: change to bitfield
-					var o = { 
-						'x': parseInt($('#x').val()), 
-						'y': parseInt($('#y').val()), 
-						'color': color
-					};
-
-					socket.emit('message', o);
-					event.preventDefault();
-				});
-
 				$('#clearButton').submit(function( event ) {
 					var o = {
 						'clearBoard' : true
@@ -233,20 +223,6 @@
 		
 		<h2 id="loadingMsg"> LOADING CANVAS... PLEASE WAIT</h2>
 		<canvas id="canvas" width="250" height="250" ></canvas>
-		<form id="setForm">
-				(
-					<input type="number" id="x" placeholder="x" min="0" max="250">,
-					<input type="number" id="y" placeholder="y" min="0" max="250">
-				)
-				&nbsp; &nbsp; &nbsp;
-				<!-- (
-					<input type="number" id="r" placeholder="r" min="0" max="255">,
-					<input type="number" id="g" placeholder="g" min="0" max="255">,
-					<input type="number" id="b" placeholder="b" min="0" max="255">
-				) -->
-				&nbsp; &nbsp; &nbsp;
-				<input type="submit" name="set" value="set (x,y)"/>
-		</form>
 		<div id="game">
 			<button class="color" data-name="A" style="background-color: rgb(0,0,0); height: 30px; width: 30px;"></button>
 			<button class="color" data-name="B" style="background-color: rgb(128,128,128); height: 30px; width: 30px;"></button>

@@ -77,23 +77,23 @@ String.prototype.replaceAt=function(index, replacement) {
     return this.substr(0, index) + replacement+ this.substr(index + 1);
 }
 
-function setBitBoard(x, y, color){
+function setBitBoard({x, y, color}){
 	bitBoard = bitBoard.replaceAt((x*dim + y), color);
 }
 
 function clearBoard(){
 	for(x=0;x<dim;x++){
 		for(y=0;y<dim;y++){
-			setBitBoard(x, y, 'P');
+			setBitBoard({x, y, color: 'P'});
 			// sendChangeToDB({x: x, y: y, color: 'P'});
 		}
 	}
 }
 
-function handlePutRequest(o, message, socket){
-	if(isValidSet(o)){
+function handlePutRequest(message, socket){
+	if(isValidSet(message)){
 		io.emit('message', message);
-		setBitBoard(o.x, o.y, o.color);
+		setBitBoard(message);
 		// sendChangeToCache(o);
 		// sendChangeToDB(o);
 	}
@@ -121,8 +121,15 @@ io.on('connection', function(socket) {
 			clearBoard();
 		}
 		else {
-			handlePutRequest(message, message, socket);
+			handlePutRequest(message, socket);
 		}
+	});
+
+	// when we get a line from the client
+	socket.on('line', function(message) {
+		console.log(message);
+        const line = JSON.parse(message.line)
+        line.forEach(({x,y}) => handlePutRequest({x, y, color:message.color}, socket))
 	});
 });
 
