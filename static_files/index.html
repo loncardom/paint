@@ -10,6 +10,62 @@
 		<script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
 		<script src="https://cdn.socket.io/4.5.4/socket.io.min.js" integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI" crossorigin="anonymous"></script>
 		<script type="text/javascript">
+
+			function drawLine(x1, y1, x2, y2, color) {
+				if (x1 == -1 || y1 == -1) {
+					socket.emit('message', {x2, y2, color});
+					return
+				}
+
+				const line = [];
+				// Create an array to store the points
+				const dx = Math.abs(x2 - x1);
+				const dy = Math.abs(y2 - y1);
+
+				// Calculate the error value
+				let error = dx - dy;
+
+				// Create a variable to store the direction of the line
+				let xstep, ystep;
+
+				// Check which direction the line is going in
+				if (x1 < x2) {
+					xstep = 1;
+				} else {
+					xstep = -1;
+				}
+				if (y1 < y2) {
+					ystep = 1;
+				} else {
+					ystep = -1;
+				}
+
+				// Loop through the points on the line
+				while (true) {
+					// Add the current point to the line
+					line.push({x: x1, y: y1});
+
+					// Check if we have reached the end point
+					if (x1 === x2 && y1 === y2) {
+						break;
+					}
+
+					// Calculate the new error value
+					const error2 = 2 * error;
+
+					// Check if we need to move in the x or y direction
+					if (error2 > -dy) {
+						error -= dy;
+						x1 += xstep;
+					}
+					if (error2 < dx) {
+						error += dx;
+						y1 += ystep;
+					}
+				}
+
+				line.forEach(({x,y}) => socket.emit('message', {x, y, color}))
+			}
 	
 			var socket;
 
@@ -17,6 +73,8 @@
 				var loading = true;
 				let dim = 250;
 				var color = 'A';
+				var prevX = -1;
+				var prevY = -1;
 
 				function getRGB(c) {
 					switch (c) {
@@ -98,19 +156,17 @@
 					if (!loading) {
 						mouseDown = false;
 					}
+					prevX = -1;
+					prevY = -1;
 				})
 
-				// Comment out the event handler below when in production
 				$('#canvas').mousemove(function(event){
 					if (!loading && mouseDown) {
 						var x=event.pageX-this.offsetLeft;
 						var y=event.pageY-this.offsetTop;
-						var o = { 
-							'x': x, 
-							'y': y, 
-							'color' : color
-						};
-						socket.emit('message', o);
+						drawLine(prevX, prevY, x, y, color);
+						prevX = x;
+						prevY = y;
 					}
 				});
 
