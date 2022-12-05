@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -44,15 +45,12 @@
 
 body {
   text-align: center;
-  align: center;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
-
-
 
 canvas {
   border: 1px solid black;
 }
 
-input[type=number]{ width: 3em; }
+input[type="number"] { width: 3em; }
