@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { useState } from "react";
-import './App.css';
+import './App.scss';
 
 
 function App() {
@@ -72,33 +72,80 @@ function App() {
   return (
     <div className="App">
       <body>
-        <h1>Online Paint</h1>
-        
-        {isLoading && <h2> LOADING CANVAS... PLEASE WAIT</h2>}
-        <canvas 
-        id="canvas" 
-        width="250" 
-        height="250" 
-        onClick={onClickCanvas}
-        ></canvas>
-        <div id="game">
-        <button className="color" data-name="A" style={{backgroundColor: "rgb(0,0,0)"}}/>
-        <button className="color" data-name="A" style={{backgroundColor: "rgb(128,128,128)"}}/>
-        <button className="color" data-name="A" style={{backgroundColor: "rgb(192,192,192)"}}/>
-          {/* 
-          <button class="color" data-name="D" style="background-color: rgb(128, 0, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="E" style="background-color: rgb(255, 0, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="F" style="background-color: rgb(128, 128, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="G" style="background-color: rgb(255, 255, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="H" style="background-color: rgb(0, 128, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="I" style="background-color: rgb(0, 255, 0); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="J" style="background-color: rgb(0, 128, 128); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="K" style="background-color: rgb(0, 255, 255); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="L" style="background-color: rgb(0, 0, 128); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="M" style="background-color: rgb(0, 0, 255); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="N" style="background-color: rgb(128, 0, 128); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="O" style="background-color: rgb(255, 0, 255); height: 30px; width: 30px;"></button>
-          <button class="color" data-name="P" style="background-color: rgb(255, 255, 255); height: 30px; width: 30px;"></button> */}
+        <div className="toolbar">
+          <span><u>F</u>ile</span>
+          <span><u>E</u>dit</span>
+          <span><u>V</u>iew</span>
+          <span><u>I</u>mage</span>
+          <span><u>C</u>olors</span>
+          <span><u>H</u>elp</span>
+          <span>E<u>x</u>tras</span>
+        </div>
+
+        <div className="main">
+          <div className="paint-tools-container">
+            <div className="paint-tools">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div className="selected"></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div className="canvas-container">
+            {isLoading && <h2> LOADING CANVAS... PLEASE WAIT</h2>}
+            <canvas 
+              id="canvas" 
+              width="250" 
+              height="250" 
+              onClick={onClickCanvas}
+            />
+          </div>
+        </div>
+
+        <div id="game" className="color-bar">
+          <div className="dual-color">
+
+          </div>
+          <button className="color" data-name="A" style={{backgroundColor: "rgb(0,0,0)"}}/>
+          <button className="color" data-name="B" style={{backgroundColor: "rgb(128,128,128)"}}/>
+          <button className="color" data-name="C" style={{backgroundColor: "rgb(192,192,192)"}}/>
+          <button className="color" data-name="D" style={{backgroundColor: "rgb(128,0,0)"}}/>
+          <button className="color" data-name="E" style={{backgroundColor: "rgb(255, 0, 0)"}}/>
+          <button className="color" data-name="F" style={{backgroundColor: "rgb(128, 128, 0)"}}/>
+          <button className="color" data-name="G" style={{backgroundColor: "rgb(192,192,192)"}}/>
+          <button className="color" data-name="H" style={{backgroundColor: "rgb(0, 128, 0)"}}/>
+          <button className="color" data-name="I" style={{backgroundColor: "rgb(0, 255, 0)"}}/>
+          <button className="color" data-name="J" style={{backgroundColor: "rgb(0, 128, 128)"}}/>
+          <button className="color" data-name="K" style={{backgroundColor: "rgb(0, 255, 255)"}}/>
+          <button className="color" data-name="L" style={{backgroundColor: "rgb(0, 0, 128)"}}/>
+          <button className="color" data-name="M" style={{backgroundColor: "rgb(0, 0, 255)"}}/>
+          <button className="color" data-name="N" style={{backgroundColor: "rgb(128, 0, 128)"}}/>
+          <button className="color" data-name="O" style={{backgroundColor: "rgb(255, 0, 255"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
         </div>
         <form id="clearButton">
           <input type="submit" name="clear" value="clear"/>

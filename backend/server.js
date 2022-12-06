@@ -22,8 +22,6 @@ const io = require("socket.io")(server, {
     }
 });
 
-console.log("a");
-
 // Lower the heartbeat timeout (helps us expire disconnected people faster)
 // io.set('heartbeat timeout', 8000);
 // io.set('heartbeat interval', 4000);
