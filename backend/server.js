@@ -97,8 +97,11 @@ function clearBoard(){
     }
 }
 
-function handlePutRequest(message, socket){
-    if(isValidSet(message)){
+function handlePutRequest(message, type){
+    if (type == "mouse") {
+        io.emit("mouse", message);
+    }
+    else if(isValidSet(message)){
         io.emit("message", message);
         setBitBoard(message);
         // sendChangeToCache(o);
@@ -129,7 +132,7 @@ io.on("connection", function(socket) {
             clearBoard();
         }
         else {
-            handlePutRequest(message, socket);
+            handlePutRequest(message);
         }
     });
 
@@ -137,7 +140,16 @@ io.on("connection", function(socket) {
     socket.on("line", function(message) {
         console.log(message);
         const line = JSON.parse(message.line);
-        line.forEach(({x,y}) => handlePutRequest({x, y, color:message.color}, socket));
+        line.forEach(({x,y}) => handlePutRequest({x, y, color:message.color}));
+    });
+
+    // when another mouse moves
+    socket.on("mouse", function(mouse) {
+        if (mouse) {
+            mouse.id = socket.id;
+            console.log("mouse", mouse);
+            socket.broadcast.emit("mouse", mouse);
+        }
     });
 });
 

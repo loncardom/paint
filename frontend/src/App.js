@@ -65,6 +65,30 @@ function Paint({socket}) {
     }
   );
 
+  socket?.on("mouse", function(e){
+    console.log(e);
+    const context = document.getElementById('canvas').getContext('2d');
+    // debugger;
+    let existingElement = document.getElementById(e.id)
+    if (existingElement) {
+      existingElement.style.top = e.y + 'px';
+      existingElement.style.left = e.x + 'px';
+    } else {
+      const newDiv = document.createElement("div");
+      const node = document.createTextNode("⬉");
+      newDiv.appendChild(node);
+      newDiv.setAttribute("id", e.id);
+      newDiv.style.position = "absolute";
+      newDiv.style.top = e.y + 'px';
+      newDiv.style.left = e.x + 'px';
+      newDiv.style.marginLeft = "62px";
+      newDiv.style.marginTop = "10px";
+      newDiv.style.fontSize = "30px";
+      newDiv.style.userSelect = "none";
+      document.getElementById('canvas').parentElement.appendChild(newDiv)
+    }
+  })
+
   
   function drawLine(x1, y1, x2, y2, color) {
     if (x1 === -1 || y1 === -1) {
@@ -151,18 +175,19 @@ function Paint({socket}) {
   }
 
   function onMouseMoveCanvas(event) {
+    const rect = event.target.getBoundingClientRect()
+    const x=Math.round(event.pageX-rect.left);
+    const y=Math.round(event.pageY-rect.top);
     if (!isLoading && mouseDown) {
-      const rect = event.target.getBoundingClientRect()
-      var x=Math.round(event.pageX-rect.left);
-      var y=Math.round(event.pageY-rect.top);
       drawLine(prevX, prevY, x, y, "A");
       prevX = x;
       prevY = y;
     }
+    socket.emit('mouse', {x, y});
   }
 
   const [isLoading, setIsLoading] = useState(false)
-  const [dim, setDim] = useState(() => 250)
+  const [dim, setDim] = useState(() => 500)
   const [mouseDown, setMouseDown] = useState(false)
 
   return (
@@ -203,13 +228,17 @@ function Paint({socket}) {
             {isLoading && <h2> LOADING CANVAS... PLEASE WAIT</h2>}
             <canvas 
               id="canvas" 
-              width="250" 
-              height="250" 
+              width="500" 
+              height="500" 
               onClick={onClickCanvas}
               onMouseDown={onMouseDownCanvas}
               onMouseUp={onMouseUpCanvas}
               onMouseMove={onMouseMoveCanvas}
-            />
+            >
+              <div>
+                abc
+              </div>
+              </canvas>
           </div>
         </div>
 
