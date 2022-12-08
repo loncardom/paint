@@ -89,4 +89,5 @@ input[type="number"] { width: 3em; }
   position: absolute;
   font-size: 30px;
   user-select: none;
+  pointer-events: none;
 }
