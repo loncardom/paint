@@ -2,53 +2,124 @@ import { io } from "socket.io-client";
 import { useState } from "react";
 import './App.scss';
 
+function initConnection(socket) {
+  socket = io("http://localhost:5501", {
+    // withCredentials: true,
+    // extraHeaders: {
+    //   "my-custom-header": "abcd"
+    // }
+  });
 
+  socket.on('open', 
+    function(event) {
+      // $('#sendButton').removeAttr('disabled');
+      console.log("connected");
+    }
+  );
+  socket.on('close', 
+    function(event) {
+      alert("closed code:" + event.code + " reason:" +event.reason + " wasClean:"+event.wasClean);
+    }
+  );
+  return socket;
+}
 function App() {
   let socket;
-  function initConnection() {
-    socket = io("http://localhost:5501", {
-      // withCredentials: true,
-      // extraHeaders: {
-      //   "my-custom-header": "abcd"
-      // }
-    });
-  
-    socket.on('open', 
-      function(event) {
-        // $('#sendButton').removeAttr('disabled');
-        console.log("connected");
-      }
-    );
-    socket.on('close', 
-      function(event) {
-        alert("closed code:" + event.code + " reason:" +event.reason + " wasClean:"+event.wasClean);
-      }
-    );
-    socket.on('message', 
-      function(e) {
-        console.log(e);
-        const context = document.getElementById('canvas').getContext('2d');
-        // on initial message from server
-        if(e.x == -1 && e.y == -1){
-          // server sets dimensions
-          setDim(e.dim)
-          document.getElementById("canvas").width = dim;
-          document.getElementById("canvas").height = dim;
-  
-          // fill colour with default colour
-          for(let i = 0; i < e.color.length; i++){
-            context.fillStyle =  getRGB(e.color.charAt(i));
-            context.fillRect(i/dim, i%dim, 1, 1);
-          }
-  
-          // remove loading sign
-          setIsLoading(false);
-        } else {
-          context.fillStyle = getRGB(e.color);
-          context.fillRect(e.x, e.y, 1, 1);
+
+  if (!socket) {
+    socket = initConnection(socket);
+  }
+
+  if (!socket) return;
+  return (
+    <Paint socket={socket}/>
+  )
+}
+
+function Paint({socket}) {
+  let prevX = -1, prevY = -1;
+
+  socket?.on('message', 
+    function(e) {
+      // console.log(e);
+      const context = document.getElementById('canvas').getContext('2d');
+      // on initial message from server
+      if(e.x == -1 && e.y == -1){
+        // server sets dimensions
+        setDim(e.dim)
+        document.getElementById("canvas").width = dim;
+        document.getElementById("canvas").height = dim;
+
+        // fill colour with default colour
+        for(let i = 0; i < e.color.length; i++){
+          context.fillStyle =  getRGB(e.color.charAt(i));
+          context.fillRect(i/dim, i%dim, 1, 1);
         }
+
+        // remove loading sign
+        setIsLoading(false);
+      } else {
+        context.fillStyle = getRGB(e.color);
+        context.fillRect(e.x, e.y, 1, 1);
       }
-    );
+    }
+  );
+
+  
+  function drawLine(x1, y1, x2, y2, color) {
+    if (x1 === -1 || y1 === -1) {
+      socket.emit('message', {x2, y2, color});
+      return
+    }
+
+    const line = [];
+    // Create an array to store the points
+    const dx = Math.abs(x2 - x1);
+    const dy = Math.abs(y2 - y1);
+
+    // Calculate the error value
+    let error = dx - dy;
+
+    // Create a variable to store the direction of the line
+    let xstep, ystep;
+
+    // Check which direction the line is going in
+    if (x1 < x2) {
+      xstep = 1;
+    } else {
+      xstep = -1;
+    }
+    if (y1 < y2) {
+      ystep = 1;
+    } else {
+      ystep = -1;
+    }
+
+    // Loop through the points on the line
+    while (true) {
+      // Add the current point to the line
+      line.push({x: x1, y: y1});
+
+      // Check if we have reached the end point
+      if (x1 === x2 && y1 === y2) {
+        break;
+      }
+
+      // Calculate the new error value
+      const error2 = 2 * error;
+
+      // Check if we need to move in the x or y direction
+      if (error2 > -dy) {
+        error -= dy;
+        x1 += xstep;
+      }
+      if (error2 < dx) {
+        error += dx;
+        y1 += ystep;
+      }
+    }
+
+    socket.emit('line', {line: JSON.stringify(line), color})
   }
 
   function onClickCanvas(event) {
@@ -65,10 +136,35 @@ function App() {
     }
   }
 
+  function onMouseDownCanvas(event) {
+    if (!isLoading) {
+      setMouseDown(true)
+    }
+  }
+
+  function onMouseUpCanvas(event) {
+    if (!isLoading) {
+      setMouseDown(false)
+    }
+    prevX = -1;
+    prevY = -1;
+  }
+
+  function onMouseMoveCanvas(event) {
+    if (!isLoading && mouseDown) {
+      const rect = event.target.getBoundingClientRect()
+      var x=Math.round(event.pageX-rect.left);
+      var y=Math.round(event.pageY-rect.top);
+      drawLine(prevX, prevY, x, y, "A");
+      prevX = x;
+      prevY = y;
+    }
+  }
+
   const [isLoading, setIsLoading] = useState(false)
   const [dim, setDim] = useState(() => 250)
+  const [mouseDown, setMouseDown] = useState(false)
 
-  initConnection();
   return (
     <div className="App">
       <body>
@@ -110,6 +206,9 @@ function App() {
               width="250" 
               height="250" 
               onClick={onClickCanvas}
+              onMouseDown={onMouseDownCanvas}
+              onMouseUp={onMouseUpCanvas}
+              onMouseMove={onMouseMoveCanvas}
             />
           </div>
         </div>
