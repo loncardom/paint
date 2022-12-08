@@ -2,7 +2,9 @@ import { io } from "socket.io-client";
 import { useState } from "react";
 import './App.scss';
 
-function initConnection(socket) {
+// initialize the socket
+function initConnection() {
+  let socket;
   socket = io("http://localhost:5501", {
     // withCredentials: true,
     // extraHeaders: {
@@ -23,12 +25,10 @@ function initConnection(socket) {
   );
   return socket;
 }
-function App() {
-  let socket;
 
-  if (!socket) {
-    socket = initConnection(socket);
-  }
+
+function App() {
+  let socket = initConnection();
 
   if (!socket) return;
   return (
@@ -39,12 +39,13 @@ function App() {
 function Paint({socket}) {
   let prevX = -1, prevY = -1;
 
-  socket?.on('message', 
+  socket.on('message', 
     function(e) {
       // console.log(e);
       const context = document.getElementById('canvas').getContext('2d');
+
       // on initial message from server
-      if(e.x == -1 && e.y == -1){
+      if(e.x === -1 && e.y === -1){
         // server sets dimensions
         setDim(e.dim)
         document.getElementById("canvas").width = dim;
@@ -59,16 +60,16 @@ function Paint({socket}) {
         // remove loading sign
         setIsLoading(false);
       } else {
+        // update single point
         context.fillStyle = getRGB(e.color);
         context.fillRect(e.x, e.y, 1, 1);
       }
     }
   );
 
-  socket?.on("mouse", function(e){
+  socket.on("mouse", function(e){
     console.log(e);
-    const context = document.getElementById('canvas').getContext('2d');
-    // debugger;
+
     let existingElement = document.getElementById(e.id)
     if (existingElement) {
       existingElement.style.top = e.y + 'px';
@@ -78,13 +79,11 @@ function Paint({socket}) {
       const node = document.createTextNode("⬉");
       newDiv.appendChild(node);
       newDiv.setAttribute("id", e.id);
-      newDiv.style.position = "absolute";
+      newDiv.classList.add('mouse');
       newDiv.style.top = e.y + 'px';
       newDiv.style.left = e.x + 'px';
       newDiv.style.marginLeft = "62px";
       newDiv.style.marginTop = "10px";
-      newDiv.style.fontSize = "30px";
-      newDiv.style.userSelect = "none";
       newDiv.style.color = e.color;
       document.getElementById('canvas').parentElement.appendChild(newDiv)
     }
@@ -94,7 +93,7 @@ function Paint({socket}) {
   function drawLine(x1, y1, x2, y2, color) {
     if (x1 === -1 || y1 === -1) {
       socket.emit('message', {x2, y2, color});
-      return
+      return;
     }
 
     const line = [];
@@ -235,11 +234,7 @@ function Paint({socket}) {
               onMouseDown={onMouseDownCanvas}
               onMouseUp={onMouseUpCanvas}
               onMouseMove={onMouseMoveCanvas}
-            >
-              <div>
-                abc
-              </div>
-              </canvas>
+            />
           </div>
         </div>
 

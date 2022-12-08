@@ -84,3 +84,9 @@ canvas {
 }
 
 input[type="number"] { width: 3em; }
+
+.mouse {
+  position: absolute;
+  font-size: 30px;
+  user-select: none;
+}
