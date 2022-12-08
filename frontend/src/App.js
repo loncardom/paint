@@ -36,6 +36,7 @@ function App() {
   )
 }
 
+let isMouseDown = false;
 function Paint({socket}) {
   let prevX = -1, prevY = -1;
 
@@ -151,24 +152,23 @@ function Paint({socket}) {
       const rect = event.target.getBoundingClientRect()
       var x=Math.round(event.pageX-rect.left);
       var y=Math.round(event.pageY-rect.top);
-      var o = { 
-        'x': x, 
-        'y': y, 
-        'color' : "A"
-      };
-      socket.emit('message', o);
+      socket.emit('message', {
+        x, 
+        y, 
+        color
+      });
     }
   }
 
   function onMouseDownCanvas(event) {
     if (!isLoading) {
-      setMouseDown(true)
+      isMouseDown = true;
     }
   }
 
   function onMouseUpCanvas(event) {
     if (!isLoading) {
-      setMouseDown(false)
+      isMouseDown = false;
     }
     prevX = -1;
     prevY = -1;
@@ -178,8 +178,8 @@ function Paint({socket}) {
     const rect = event.target.getBoundingClientRect()
     const x=Math.round(event.pageX-rect.left);
     const y=Math.round(event.pageY-rect.top);
-    if (!isLoading && mouseDown) {
-      drawLine(prevX, prevY, x, y, "A");
+    if (!isLoading && isMouseDown) {
+      drawLine(prevX, prevY, x, y, color);
       prevX = x;
       prevY = y;
     }
@@ -188,7 +188,7 @@ function Paint({socket}) {
 
   const [isLoading, setIsLoading] = useState(false)
   const [dim, setDim] = useState(() => 500)
-  const [mouseDown, setMouseDown] = useState(false)
+  const [color, setColor] = useState("A");
 
   return (
     <div className="App">
@@ -242,34 +242,34 @@ function Paint({socket}) {
           <div className="dual-color">
 
           </div>
-          <button className="color" data-name="A" style={{backgroundColor: "rgb(0,0,0)"}}/>
-          <button className="color" data-name="B" style={{backgroundColor: "rgb(128,128,128)"}}/>
-          <button className="color" data-name="C" style={{backgroundColor: "rgb(192,192,192)"}}/>
-          <button className="color" data-name="D" style={{backgroundColor: "rgb(128,0,0)"}}/>
-          <button className="color" data-name="E" style={{backgroundColor: "rgb(255, 0, 0)"}}/>
-          <button className="color" data-name="F" style={{backgroundColor: "rgb(128, 128, 0)"}}/>
-          <button className="color" data-name="G" style={{backgroundColor: "rgb(192,192,192)"}}/>
-          <button className="color" data-name="H" style={{backgroundColor: "rgb(0, 128, 0)"}}/>
-          <button className="color" data-name="I" style={{backgroundColor: "rgb(0, 255, 0)"}}/>
-          <button className="color" data-name="J" style={{backgroundColor: "rgb(0, 128, 128)"}}/>
-          <button className="color" data-name="K" style={{backgroundColor: "rgb(0, 255, 255)"}}/>
-          <button className="color" data-name="L" style={{backgroundColor: "rgb(0, 0, 128)"}}/>
-          <button className="color" data-name="M" style={{backgroundColor: "rgb(0, 0, 255)"}}/>
-          <button className="color" data-name="N" style={{backgroundColor: "rgb(128, 0, 128)"}}/>
-          <button className="color" data-name="O" style={{backgroundColor: "rgb(255, 0, 255"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" data-name="P" style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("A")} style={{backgroundColor: "rgb(0,0,0)"}}/>
+          <button className="color" onClick={()=>setColor("B")} style={{backgroundColor: "rgb(128,128,128)"}}/>
+          <button className="color" onClick={()=>setColor("C")} style={{backgroundColor: "rgb(192,192,192)"}}/>
+          <button className="color" onClick={()=>setColor("D")} style={{backgroundColor: "rgb(128,0,0)"}}/>
+          <button className="color" onClick={()=>setColor("E")} style={{backgroundColor: "rgb(255, 0, 0)"}}/>
+          <button className="color" onClick={()=>setColor("F")} style={{backgroundColor: "rgb(128, 128, 0)"}}/>
+          <button className="color" onClick={()=>setColor("G")} style={{backgroundColor: "rgb(192,192,192)"}}/>
+          <button className="color" onClick={()=>setColor("H")} style={{backgroundColor: "rgb(0, 128, 0)"}}/>
+          <button className="color" onClick={()=>setColor("I")} style={{backgroundColor: "rgb(0, 255, 0)"}}/>
+          <button className="color" onClick={()=>setColor("J")} style={{backgroundColor: "rgb(0, 128, 128)"}}/>
+          <button className="color" onClick={()=>setColor("K")} style={{backgroundColor: "rgb(0, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("L")} style={{backgroundColor: "rgb(0, 0, 128)"}}/>
+          <button className="color" onClick={()=>setColor("M")} style={{backgroundColor: "rgb(0, 0, 255)"}}/>
+          <button className="color" onClick={()=>setColor("N")} style={{backgroundColor: "rgb(128, 0, 128)"}}/>
+          <button className="color" onClick={()=>setColor("O")} style={{backgroundColor: "rgb(255, 0, 255"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
         </div>
         <form id="clearButton">
           <input type="submit" name="clear" value="clear"/>

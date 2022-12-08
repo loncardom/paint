@@ -125,7 +125,7 @@ io.on("connection", function(socket) {
     // when another mouse moves
     socket.on("mouse", function(mouse) {
         // console.log("mouse", mouse);
-        if (!users.id) {
+        if (!users[socket.id]) {
             users[socket.id] = {
                 color: getColor()
             };
