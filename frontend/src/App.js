@@ -85,6 +85,7 @@ function Paint({socket}) {
       newDiv.style.marginTop = "10px";
       newDiv.style.fontSize = "30px";
       newDiv.style.userSelect = "none";
+      newDiv.style.color = e.color;
       document.getElementById('canvas').parentElement.appendChild(newDiv)
     }
   })

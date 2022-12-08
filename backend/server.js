@@ -22,29 +22,6 @@ const io = require("socket.io")(server, {
     }
 });
 
-// Lower the heartbeat timeout (helps us expire disconnected people faster)
-// io.set('heartbeat timeout', 8000);
-// io.set('heartbeat interval', 4000);
-
-var numToChar = [
-    "P", //white
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "A"  //black
-];
-
 var charToNum = {
     P: [0, 0, 0, 0], //P is white because the default whiteboard color is white
     B: [0, 0, 0, 1],
@@ -63,6 +40,8 @@ var charToNum = {
     O: [1, 1, 1, 0],
     A: [1, 1, 1, 1]
 };
+
+let users = {};
 
 function isValidSet(o){
     var isValid = false;
@@ -127,7 +106,7 @@ io.on("connection", function(socket) {
 
     // when we get a message from the client
     socket.on("message", function(message) {
-        console.log(message);
+        // console.log(message);
         if (message.clearBoard == true){
             clearBoard();
         }
@@ -138,26 +117,42 @@ io.on("connection", function(socket) {
 
     // when we get a line from the client
     socket.on("line", function(message) {
-        console.log(message);
+        // console.log(message);
         const line = JSON.parse(message.line);
         line.forEach(({x,y}) => handlePutRequest({x, y, color:message.color}));
     });
 
     // when another mouse moves
     socket.on("mouse", function(mouse) {
-        if (mouse) {
-            mouse.id = socket.id;
-            console.log("mouse", mouse);
-            socket.broadcast.emit("mouse", mouse);
+        // console.log("mouse", mouse);
+        if (!users.id) {
+            users[socket.id] = {
+                color: getColor()
+            };
         }
+        mouse.id = socket.id;
+        mouse.color = users[socket.id].color;
+        socket.broadcast.emit("mouse", mouse);
     });
 });
 
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
 
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
+let colorIdx = -1;
+function getColor() {
+    colorIdx++;
+    return COLORS[colorIdx % (COLORS.length - 1)];
+}
+
+const COLORS = [
+    "red", 
+    "blue", 
+    "purple", 
+    "green", 
+    "#D6D6D6", 
+    "#FFF5E7", 
+    "#D2B4DE", 
+    "#AEC6CF", 
+    "#F4BAC0", 
+    "#A7FCD8"
+];
