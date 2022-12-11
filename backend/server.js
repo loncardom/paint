@@ -7,7 +7,7 @@ const app = express();
 app.use("/", express.static("static_files")); // this directory has files to be returned
 
 //this doesnt work because the index.html in build has all its <scripts in the immediate dir
-app.use("/abc", express.static(path.join(__dirname, "../paint-frontend/build"))); // this directory has files to be returned
+app.use("/abc", express.static(path.join(__dirname, "../frontend/build"))); // this directory has files to be returned
 
 const port = 5501;
 const server = require("http").createServer(app);
@@ -22,6 +22,7 @@ const io = require("socket.io")(server, {
     }
 });
 
+// 4 bit colour
 var charToNum = {
     P: [0, 0, 0, 0], //P is white because the default whiteboard color is white
     B: [0, 0, 0, 1],
@@ -47,30 +48,30 @@ function isValidSet(o){
     var isValid = false;
     try {
         isValid = 
-        Number.isInteger(o.x) && o.x != null && 0 <= o.x && o.x < dim &&
-        Number.isInteger(o.y) && o.y != null && 0 <= o.y && o.y < dim && 
-        !!charToNum[o.color];
+        Number.isInteger(o.x) && o.x != null && 0 <= o.x && o.x < dim.x &&
+        Number.isInteger(o.y) && o.y != null && 0 <= o.y && o.y < dim.y; 
+        // !!charToNum[o.color];
     } catch (err){ 
         isValid = false; 
     } return isValid;
 }
 
-const dim = 500; 
+const dim = {x: 500, y: 500}; 
 let bitBoard = "";
-bitBoard = bitBoard.concat("P".repeat(dim * dim)); //set entire board to white
+bitBoard = bitBoard.concat("O".repeat(dim.x * dim.y)); //set entire board to white
 
 String.prototype.replaceAt = function(index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + 1);
 };
 
 function setBitBoard({x, y, color}){
-    bitBoard = bitBoard.replaceAt((x * dim + y), color);
+    bitBoard = bitBoard.replaceAt((x * dim.x + y), color);
 }
 
 function clearBoard(){
-    for(let x = 0; x < dim;x++){
-        for(let y = 0; y < dim;y++){
-            setBitBoard({x, y, color: "P"});
+    for(let x = 0; x < dim.x;x++){
+        for(let y = 0; y < dim.y;y++){
+            setBitBoard({x, y, color: "O"});
             // sendChangeToDB({x: x, y: y, color: 'P'});
         }
     }

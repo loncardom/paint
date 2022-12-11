@@ -49,13 +49,13 @@ function Paint({socket}) {
       if(e.x === -1 && e.y === -1){
         // server sets dimensions
         setDim(e.dim);
-        document.getElementById("canvas").width = dim;
-        document.getElementById("canvas").height = dim;
+        document.getElementById("canvas").width = dim.x;
+        document.getElementById("canvas").height = dim.y;
 
         // fill colour with default colour
         for(let i = 0; i < e.color.length; i++){
           context.fillStyle =  getRGB(e.color.charAt(i));
-          context.fillRect(i / dim, i % dim, 1, 1);
+          context.fillRect(i / dim.x, i % dim.y, 1, 1);
         }
 
         // remove loading sign
@@ -187,7 +187,7 @@ function Paint({socket}) {
   }
 
   const [isLoading, setIsLoading] = useState(false);
-  const [dim, setDim] = useState(() => 500);
+  const [dim, setDim] = useState(() => ({x:500, y:500}));
   const [color, setColor] = useState("A");
 
   return (
@@ -228,8 +228,8 @@ function Paint({socket}) {
             {isLoading && <h2> LOADING CANVAS... PLEASE WAIT</h2>}
             <canvas 
               id="canvas" 
-              width="500" 
-              height="500" 
+              width={dim.x}
+              height={dim.y}
               onClick={onClickCanvas}
               onMouseDown={onMouseDownCanvas}
               onMouseUp={onMouseUpCanvas}
@@ -244,34 +244,34 @@ function Paint({socket}) {
               
             </div>
           </div>
-          <button className="color" onClick={()=>setColor("A")} style={{backgroundColor: "rgb(0,0,0)"}}/>
-          <button className="color" onClick={()=>setColor("B")} style={{backgroundColor: "rgb(128,128,128)"}}/>
-          <button className="color" onClick={()=>setColor("C")} style={{backgroundColor: "rgb(192,192,192)"}}/>
-          <button className="color" onClick={()=>setColor("D")} style={{backgroundColor: "rgb(128,0,0)"}}/>
-          <button className="color" onClick={()=>setColor("E")} style={{backgroundColor: "rgb(255, 0, 0)"}}/>
-          <button className="color" onClick={()=>setColor("F")} style={{backgroundColor: "rgb(128, 128, 0)"}}/>
-          <button className="color" onClick={()=>setColor("G")} style={{backgroundColor: "rgb(192,192,192)"}}/>
-          <button className="color" onClick={()=>setColor("H")} style={{backgroundColor: "rgb(0, 128, 0)"}}/>
-          <button className="color" onClick={()=>setColor("I")} style={{backgroundColor: "rgb(0, 255, 0)"}}/>
-          <button className="color" onClick={()=>setColor("J")} style={{backgroundColor: "rgb(0, 128, 128)"}}/>
-          <button className="color" onClick={()=>setColor("K")} style={{backgroundColor: "rgb(0, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("L")} style={{backgroundColor: "rgb(0, 0, 128)"}}/>
-          <button className="color" onClick={()=>setColor("M")} style={{backgroundColor: "rgb(0, 0, 255)"}}/>
-          <button className="color" onClick={()=>setColor("N")} style={{backgroundColor: "rgb(128, 0, 128)"}}/>
-          <button className="color" onClick={()=>setColor("O")} style={{backgroundColor: "rgb(255, 0, 255"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
-          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: "rgb(255, 255, 255)"}}/>
+          <button className="color" onClick={()=>setColor("A")} style={{backgroundColor: getRGB("A")}}/>
+          <button className="color" onClick={()=>setColor("B")} style={{backgroundColor: getRGB("B")}}/>
+          <button className="color" onClick={()=>setColor("C")} style={{backgroundColor: getRGB("C")}}/>
+          <button className="color" onClick={()=>setColor("D")} style={{backgroundColor: getRGB("D")}}/>
+          <button className="color" onClick={()=>setColor("E")} style={{backgroundColor: getRGB("E")}}/>
+          <button className="color" onClick={()=>setColor("F")} style={{backgroundColor: getRGB("F")}}/>
+          <button className="color" onClick={()=>setColor("G")} style={{backgroundColor: getRGB("G")}}/>
+          <button className="color" onClick={()=>setColor("H")} style={{backgroundColor: getRGB("H")}}/>
+          <button className="color" onClick={()=>setColor("I")} style={{backgroundColor: getRGB("I")}}/>
+          <button className="color" onClick={()=>setColor("J")} style={{backgroundColor: getRGB("J")}}/>
+          <button className="color" onClick={()=>setColor("K")} style={{backgroundColor: getRGB("K")}}/>
+          <button className="color" onClick={()=>setColor("L")} style={{backgroundColor: getRGB("L")}}/>
+          <button className="color" onClick={()=>setColor("M")} style={{backgroundColor: getRGB("M")}}/>
+          <button className="color" onClick={()=>setColor("N")} style={{backgroundColor: getRGB("N")}}/>
+          <button className="color" onClick={()=>setColor("O")} style={{backgroundColor: getRGB("O")}}/>
+          <button className="color" onClick={()=>setColor("P")} style={{backgroundColor: getRGB("P")}}/>
+          <button className="color" onClick={()=>setColor("Q")} style={{backgroundColor: getRGB("Q")}}/>
+          <button className="color" onClick={()=>setColor("R")} style={{backgroundColor: getRGB("R")}}/>
+          <button className="color" onClick={()=>setColor("S")} style={{backgroundColor: getRGB("S")}}/>
+          <button className="color" onClick={()=>setColor("T")} style={{backgroundColor: getRGB("T")}}/>
+          <button className="color" onClick={()=>setColor("U")} style={{backgroundColor: getRGB("U")}}/>
+          <button className="color" onClick={()=>setColor("V")} style={{backgroundColor: getRGB("V")}}/>
+          <button className="color" onClick={()=>setColor("W")} style={{backgroundColor: getRGB("W")}}/>
+          <button className="color" onClick={()=>setColor("X")} style={{backgroundColor: getRGB("X")}}/>
+          <button className="color" onClick={()=>setColor("Y")} style={{backgroundColor: getRGB("Y")}}/>
+          <button className="color" onClick={()=>setColor("2")} style={{backgroundColor: getRGB("2")}}/>
+          <button className="color" onClick={()=>setColor("Z")} style={{backgroundColor: getRGB("Z")}}/>
+          <button className="color" onClick={()=>setColor("1")} style={{backgroundColor: getRGB("1")}}/>
         </div>
         <form id="clearButton">
           <input type="submit" name="clear" value="clear"/>
@@ -285,37 +285,62 @@ function getRGB(c) {
   switch (c) {
   default:
   case "A":
-    return "rgb(0, 0, 0)";   //black
+    return "#000000";
   case "B":
-    return "rgb(128, 128, 128)"; //gray
+    return "#808080";
   case "C":
-    return "rgb(192, 192, 192)"; //silver
+    return "#800000";
   case "D":
-    return "rgb(128, 0, 0)";  //maroon
+    return "#808000";
   case "E":
-    return "rgb(255, 0, 0)";  //red
+    return "#008000";
   case "F":
-    return "rgb(128, 128, 0)";  //olive
+    return "#008080";
   case "G":
-    return "rgb(255, 255, 0)";  //yellow
+    return "#000080";
   case "H":
-    return "rgb(0, 128, 0)";  //green
+    return "#800080";
   case "I":
-    return "rgb(0, 255, 0)";  //lime
+    return "#808040";
   case "J":
-    return "rgb(0, 128, 128)";  //teal
+    return "#004040";
   case "K":
-    return "rgb(0, 255, 255)";  //aqua
+    return "#0080FF";
   case "L":
-    return "rgb(0, 0, 128)";  //navy
+    return "#004080";
   case "M":
-    return "rgb(0, 0, 255)";  //blue
+    return "#4001FF";
   case "N":
-    return "rgb(128, 0, 128)";  //purple
+    return "#804000";
+  // row 2
   case "O":
-    return "rgb(255, 0, 255)";  //fuchsia
+    return "#FFFFFF";
   case "P":
-    return "rgb(255, 255, 255)"; //white
+    return "#C0C0C0";
+  case "Q":
+    return "#FF0000";
+  case "R":
+    return "#FFFF04";
+  case "S":
+    return "#00FF00";
+  case "T":
+    return "#00FFFF";
+  case "U":
+    return "#0000FF";
+  case "V":
+    return "#FF00FF";
+  case "W":
+    return "#FFFF80";
+  case "X":
+    return "#00FF80";
+  case "Y":
+    return "#80FFFF";
+  case "Z":
+    return "#FF0080";
+  case "1":
+    return "#FF8040";
+  case "2":
+    return "#8080FF";
   }
 }
 
