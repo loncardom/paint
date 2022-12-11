@@ -38,6 +38,7 @@ module.exports = {
     ],
     "space-infix-ops": "error",
     "no-tabs": "error",
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "no-constant-condition": 0
   },
 };
