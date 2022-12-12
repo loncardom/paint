@@ -4,10 +4,7 @@ const app = express();
 
 // static_files has all of statically returned content
 // https://expressjs.com/en/starter/static-files.html
-app.use("/", express.static("static_files")); // this directory has files to be returned
-
-//this doesnt work because the index.html in build has all its <scripts in the immediate dir
-app.use("/abc", express.static(path.join(__dirname, "../frontend/build"))); // this directory has files to be returned
+app.use("/", express.static(path.join(__dirname, "../frontend/build"))); // this directory has files to be returned
 
 const port = 5501;
 const server = require("http").createServer(app);
