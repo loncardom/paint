@@ -5,7 +5,8 @@ import "./App.scss";
 // initialize the socket
 function initConnection() {
   let socket;
-  socket = io("http://localhost:5501", {
+  socket = io(window.location.href, {
+    transports: ["websocket", "polling", "flashsocket"],
     // withCredentials: true,
     // extraHeaders: {
     //   "my-custom-header": "abcd"

@@ -4,7 +4,7 @@ const app = express();
 
 // static_files has all of statically returned content
 // https://expressjs.com/en/starter/static-files.html
-app.use("/", express.static(path.join(__dirname, "../frontend/build"))); // this directory has files to be returned
+app.use("/", express.static(path.join(__dirname, "./frontend/build"))); // this directory has files to be returned
 
 const port = 5501;
 const server = require("http").createServer(app);
@@ -45,8 +45,8 @@ function isValidSet(o){
     var isValid = false;
     try {
         isValid = 
-        Number.isInteger(o.x) && o.x != null && 0 <= o.x && o.x < dim.x &&
-        Number.isInteger(o.y) && o.y != null && 0 <= o.y && o.y < dim.y; 
+            Number.isInteger(o.x) && o.x != null && 0 <= o.x && o.x < dim.x &&
+            Number.isInteger(o.y) && o.y != null && 0 <= o.y && o.y < dim.y; 
         // !!charToNum[o.color];
     } catch (err){ 
         isValid = false; 
