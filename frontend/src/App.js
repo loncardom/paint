@@ -40,33 +40,40 @@ function App() {
 let isMouseDown = false;
 function Paint({socket}) {
   let prevX = -1, prevY = -1;
+  
+  socket.on("clear", function() {
+    const context = document.getElementById("canvas").getContext("2d");
 
-  socket.on("message", 
-    function(e) {
-      // console.log(e);
-      const context = document.getElementById("canvas").getContext("2d");
+    // fill colour with default colour
+    context.fillStyle =  getRGB("O");
+    context.fillRect(0, 0, dim.x, dim.y);
+  });
 
-      // on initial message from server
-      if(e.x === -1 && e.y === -1){
-        // server sets dimensions
-        setDim(e.dim);
-        document.getElementById("canvas").width = dim.x;
-        document.getElementById("canvas").height = dim.y;
+  socket.on("message", function(e) {
+    // console.log(e);
+    const context = document.getElementById("canvas").getContext("2d");
 
-        // fill colour with default colour
-        for(let i = 0; i < e.color.length; i++){
-          context.fillStyle =  getRGB(e.color.charAt(i));
-          context.fillRect(i / dim.x, i % dim.y, 1, 1);
-        }
+    // on initial message from server
+    if(e.x === -1 && e.y === -1){
+      // server sets dimensions
+      setDim(e.dim);
+      document.getElementById("canvas").width = dim.x;
+      document.getElementById("canvas").height = dim.y;
 
-        // remove loading sign
-        setIsLoading(false);
-      } else {
-        // update single point
-        context.fillStyle = getRGB(e.color);
-        context.fillRect(e.x, e.y, 1, 1);
+      // fill colour with default colour
+      for(let i = 0; i < e.color.length; i++){
+        context.fillStyle =  getRGB(e.color.charAt(i));
+        context.fillRect(i / dim.x, i % dim.y, 1, 1);
       }
+
+      // remove loading sign
+      setIsLoading(false);
+    } else {
+      // update single point
+      context.fillStyle = getRGB(e.color);
+      context.fillRect(e.x, e.y, 1, 1);
     }
+  }
   );
 
   socket.on("mouse", function(e){
@@ -146,6 +153,12 @@ function Paint({socket}) {
     }
 
     socket.emit("line", {line: JSON.stringify(line), color});
+  }
+
+  function clearCanvas() {
+    if (!isLoading) {
+      socket.emit("clear");
+    }
   }
 
   function onClickCanvas(event) {
@@ -274,9 +287,9 @@ function Paint({socket}) {
           <button className="color" onClick={()=>setColor("Z")} style={{backgroundColor: getRGB("Z")}}/>
           <button className="color" onClick={()=>setColor("1")} style={{backgroundColor: getRGB("1")}}/>
         </div>
-        <form id="clearButton">
-          <input type="submit" name="clear" value="clear"/>
-        </form>
+        <button onClick={clearCanvas}>
+          clear
+        </button>
       </body>
     </div>
   );

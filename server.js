@@ -66,12 +66,8 @@ function setBitBoard({x, y, color}){
 }
 
 function clearBoard(){
-    for(let x = 0; x < dim.x;x++){
-        for(let y = 0; y < dim.y;y++){
-            setBitBoard({x, y, color: "O"});
-            // sendChangeToDB({x: x, y: y, color: 'P'});
-        }
-    }
+    bitBoard = "".concat("O".repeat(dim.x * dim.y)); //set entire board to white
+    io.emit("clear");
 }
 
 function handlePutRequest(message, type){
@@ -102,15 +98,13 @@ io.on("connection", function(socket) {
     });
     console.log("Done sending initial board...");
 
+    socket.on("clear", function() {
+        clearBoard();
+    })
+
     // when we get a message from the client
     socket.on("message", function(message) {
-        // console.log(message);
-        if (message.clearBoard == true){
-            clearBoard();
-        }
-        else {
-            handlePutRequest(message);
-        }
+        handlePutRequest(message);
     });
 
     // when we get a line from the client
