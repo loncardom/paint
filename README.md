@@ -33,7 +33,7 @@ For development, you can build the application with the following:
 ## TODO
 
 #### Toolbar:
-1. pencil - DONE
+1. pencil ✅
 2. brush
 3. spray
 4. line
@@ -42,12 +42,12 @@ For development, you can build the application with the following:
 1. right click
 
 #### Multiplayer
-1. player cursors - DONE
+1. player cursors ✅
 2. remove cursors on inactivity
 3. show which tool/colour each player has selected
 
 #### Features
-1. add ability to clear board - done
+1. add ability to clear board ✅
 2. allow picture imports
 3. allow resizing of canvas
 4. implement menu bar
