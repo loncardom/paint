@@ -1,6 +1,5 @@
 <h1 align="center">MS Paint Multiplayer</h1>
 
----
 
 A Windows 98 clone of Microsoft Paint built for the web with support for multiplayer.
 
@@ -33,25 +32,25 @@ For development, you can build the application with the following:
 
 ## TODO
 
-1. Toolbar:
-a) pencil - DONE
-b) brush
-c) spray
-d) line
+#### Toolbar:
+1. pencil - DONE
+2. brush
+3. spray
+4. line
 
-2. Color bar
-a) right click
+#### Color bar
+1. right click
 
-3. Multiplayer
-a) player cursors - DONE
-b) remove cursors on inactivity
-c) show which tool/colour each player has selected
+#### Multiplayer
+1. player cursors - DONE
+2. remove cursors on inactivity
+3. show which tool/colour each player has selected
 
-4. Features
-a) add ability to clear board - done
-b) allow picture imports
-c) allow resizing of canvas
-d) implement menu bar
+#### Features
+1. add ability to clear board - done
+2. allow picture imports
+3. allow resizing of canvas
+4. implement menu bar
 
-5. Infrastructure
-a) change colour data from alphanumeric to HEX
+#### Infrastructure
+1. change colour data from alphanumeric to HEX
