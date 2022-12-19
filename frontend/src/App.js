@@ -6,16 +6,11 @@ import "./App.scss";
 function initConnection() {
   let socket;
   socket = io(window.location.href, {
-    transports: ["websocket", "polling", "flashsocket"],
-    // withCredentials: true,
-    // extraHeaders: {
-    //   "my-custom-header": "abcd"
-    // }
+    transports: ["websocket", "polling", "flashsocket"]
   });
 
   socket.on("open", 
     function(event) {
-      // $('#sendButton').removeAttr('disabled');
       console.log("connected");
     }
   );
@@ -26,7 +21,6 @@ function initConnection() {
   );
   return socket;
 }
-
 
 function App() {
   let socket = initConnection();
@@ -77,8 +71,6 @@ function Paint({socket}) {
   );
 
   socket.on("mouse", function(e){
-    console.log(e);
-
     let existingElement = document.getElementById(e.id);
     if (existingElement) {
       existingElement.style.top = e.y + "px";
@@ -98,13 +90,7 @@ function Paint({socket}) {
     }
   });
 
-  
-  function drawLine(x1, y1, x2, y2, color) {
-    if (x1 === -1 || y1 === -1) {
-      socket.emit("message", {x2, y2, color});
-      return;
-    }
-
+  function getPointsBetweenTwoPoints(x1, y1, x2, y2) {
     const line = [];
     // Create an array to store the points
     const dx = Math.abs(x2 - x1);
@@ -152,6 +138,36 @@ function Paint({socket}) {
       }
     }
 
+    return line;
+  }
+
+
+  function previewLine(x1, y1, x2, y2, color) {
+    console.log(x1,x2, y1,y2);
+    if (x1 === -1 || y1 === -1) {
+      return;
+    }
+
+    var canvas = document.getElementById("canvas");
+    var context = canvas?.getContext?.("2d");
+
+    if (context) {
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y2);
+      context.stroke();
+    }
+  }
+
+  
+  function drawLine(x1, y1, x2, y2, color) {
+    if (x1 === -1 || y1 === -1) {
+      socket.emit("message", {x2, y2, color});
+      return;
+    }
+
+    const line = getPointsBetweenTwoPoints(x1, y1, x2, y2);
+
     socket.emit("line", {line: JSON.stringify(line), color});
   }
 
@@ -177,6 +193,13 @@ function Paint({socket}) {
   function onMouseDownCanvas(event) {
     if (!isLoading) {
       isMouseDown = true;
+      if (tool === "line") {
+        const rect = event.target.getBoundingClientRect();
+        const x = Math.round(event.pageX - rect.left);
+        const y = Math.round(event.pageY - rect.top);
+        prevX = x;
+        prevY = y;
+      }
     }
   }
 
@@ -193,16 +216,24 @@ function Paint({socket}) {
     const x = Math.round(event.pageX - rect.left);
     const y = Math.round(event.pageY - rect.top);
     if (!isLoading && isMouseDown) {
-      drawLine(prevX, prevY, x, y, color);
-      prevX = x;
-      prevY = y;
+      if (tool === "pencil") {
+        drawLine(prevX, prevY, x, y, color);
+        prevX = x;
+        prevY = y;
+      }
+      else if (tool === "line") {
+        previewLine(prevX, prevY, x, y, color);
+      }
     }
     socket.emit("mouse", {x, y});
   }
 
   const [isLoading, setIsLoading] = useState(false);
   const [dim, setDim] = useState(() => ({x:500, y:500}));
+
+  const [tool, setTool] = useState("pencil");
   const [color, setColor] = useState("A");
+  // const [img, setImg] = useState();
 
   return (
     <div className="App">
@@ -226,11 +257,11 @@ function Paint({socket}) {
               <div></div>
               <div></div>
               <div></div>
-              <div className="selected"></div>
+              <div className={tool === "pencil" ? "selected pencil" : "pencil"} onClick={() => setTool("pencil")}></div>
               <div></div>
               <div></div>
               <div></div>
-              <div></div>
+              <div className={tool === "line" ? "selected line" : "line"} onClick={() => setTool("line")}></div>
               <div></div>
               <div></div>
               <div></div>
@@ -289,6 +320,35 @@ function Paint({socket}) {
         </div>
         <button onClick={clearCanvas}>
           clear
+        </button>
+        <button>
+          <input type="file"
+            id="avatar" name="avatar"
+            accept="image/png, image/jpeg"
+            onChange={(e) => {
+
+              function draw() {
+                var canvas = document.getElementById("canvas");
+                // canvas.width = this.width;
+                // canvas.height = this.height;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0,0);
+              }
+
+              function failed() {
+                console.error("The provided file couldn't be loaded as an Image media");
+              }
+              // console.log(e);
+              // setImg();
+              var img = new Image();
+              img.onload = draw;
+              img.onerror = failed;
+              img.src = URL.createObjectURL(e.target.files[0]);
+              // setImg(img);
+            }}
+          >
+          </input>
+          open
         </button>
       </body>
     </div>
