@@ -1,7 +1,7 @@
 <h1 align="center">MS Paint Multiplayer</h1>
 
 <p align="center">
-   <img width="803" height="587" src="https://raw.githubusercontent.com/loncardom/paint/main/paint.png?token=GHSAT0AAAAAAB364FMGDGXTFMLTJ7ADHZXIY47SYQQ"/>
+   <img width="803" height="587" src="https://raw.githubusercontent.com/loncardom/paint/main/paint.png"/>
 </p>
 
 
