@@ -26,11 +26,25 @@ export default function Paint({socket}) {
       document.getElementById("canvas").width = dim.x;
       document.getElementById("canvas").height = dim.y;
 
+      // save the state of the board
+      let imgData = context.createImageData(e.dim.x, e.dim.y);
+
       // fill colour with default colour
       for(let i = 0; i < e.color.length; i++){
+        const color = getRGB(e.color.charAt(i));
+        imgData.data[(4 * i)] = parseInt(color.substring(1, 3), 16);
+        imgData.data[(4 * i) + 1] = parseInt(color.substring(3, 5), 16);
+        imgData.data[(4 * i) + 2] = parseInt(color.substring(5, 7), 16);
+        imgData.data[(4 * i) + 3] = 255;
+
+        // imgData.data[(4 * i)] = 55;
+        // imgData.data[(4 * i) + 1] = 55;
+        // imgData.data[(4 * i) + 2] = 55;
+        // imgData.data[(4 * i) + 3] = 255;
         context.fillStyle =  getRGB(e.color.charAt(i));
-        context.fillRect(i / dim.x, i % dim.y, 1, 1);
+        context.fillRect(i % dim.x, i / dim.y, 1, 1);
       }
+      setBoardState(imgData);
 
       // remove loading sign
       setIsLoading(false);
@@ -39,6 +53,7 @@ export default function Paint({socket}) {
       context.fillStyle = getRGB(e.color);
       context.fillRect(e.x, e.y, 1, 1);
     }
+
   });
 
   // render another users mouse
@@ -74,6 +89,7 @@ export default function Paint({socket}) {
     var context = canvas?.getContext?.("2d");
 
     if (context) {
+      context.putImageData(boardState, 0,0);
       context.beginPath();
       context.moveTo(x1, y1);
       context.lineTo(x2, y2);
@@ -152,6 +168,7 @@ export default function Paint({socket}) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [dim, setDim] = useState(() => ({x:500, y:500}));
+  const [boardState, setBoardState] = useState();
 
   const [tool, setTool] = useState("pencil");
   const [color, setColor] = useState("A");

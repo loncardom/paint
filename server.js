@@ -62,7 +62,7 @@ String.prototype.replaceAt = function(index, replacement) {
 };
 
 function setBitBoard({x, y, color}){
-    bitBoard = bitBoard.replaceAt((x * dim.x + y), color);
+    bitBoard = bitBoard.replaceAt((y * dim.x + x), color);
 }
 
 function clearBoard(){
