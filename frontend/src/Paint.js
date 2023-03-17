@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import "./App.scss";
-import {getPointsBetweenTwoPoints, getRGB} from "./utils.js";
+import {getPointsBetweenTwoPoints, getRGB, debounce} from "./utils.js";
 
 let isMouseDown = false;
 export default function Paint({socket}) {
   let prevX = -1, prevY = -1;
+  let debouncedSetBoardState = debounce({
+    func: () => {
+      const context = document.getElementById("canvas").getContext("2d", {willReadFrequently: true});
+      setBoardState(context.getImageData(0,0,dim.x,dim.y, {willReadFrequently: true}));
+    },
+    wait: 50
+  });
   
   // clear board
   socket.on("clear", function() {
@@ -36,11 +43,6 @@ export default function Paint({socket}) {
         imgData.data[(4 * i) + 1] = parseInt(color.substring(3, 5), 16);
         imgData.data[(4 * i) + 2] = parseInt(color.substring(5, 7), 16);
         imgData.data[(4 * i) + 3] = 255;
-
-        // imgData.data[(4 * i)] = 55;
-        // imgData.data[(4 * i) + 1] = 55;
-        // imgData.data[(4 * i) + 2] = 55;
-        // imgData.data[(4 * i) + 3] = 255;
         context.fillStyle =  getRGB(e.color.charAt(i));
         context.fillRect(i % dim.x, i / dim.y, 1, 1);
       }
@@ -52,8 +54,14 @@ export default function Paint({socket}) {
       // update single point
       context.fillStyle = getRGB(e.color);
       context.fillRect(e.x, e.y, 1, 1);
+      debouncedSetBoardState();
+      // const i = e.y * dim.y + e.x;
+      // boardState.data[(4 * i)] = parseInt(color.substring(1, 3), 16);
+      // boardState.data[(4 * i) + 1] = parseInt(color.substring(3, 5), 16);
+      // boardState.data[(4 * i) + 2] = parseInt(color.substring(5, 7), 16);
+      // boardState.data[(4 * i) + 3] = 255;
+      // setBoardState(boardState);
     }
-
   });
 
   // render another users mouse
@@ -89,7 +97,7 @@ export default function Paint({socket}) {
     var context = canvas?.getContext?.("2d");
 
     if (context) {
-      context.putImageData(boardState, 0,0);
+      redrawCanvas();
       context.beginPath();
       context.moveTo(x1, y1);
       context.lineTo(x2, y2);
@@ -113,6 +121,12 @@ export default function Paint({socket}) {
     if (!isLoading) {
       socket.emit("clear");
     }
+  }
+
+  function redrawCanvas() {
+    var canvas = document.getElementById("canvas");
+    var context = canvas?.getContext?.("2d");
+    context.putImageData(boardState, 0,0);
   }
 
   function onClickCanvas(event) {
@@ -142,8 +156,15 @@ export default function Paint({socket}) {
   }
 
   function onMouseUpCanvas(event) {
+    const rect = event.target.getBoundingClientRect();
+    const x = Math.round(event.pageX - rect.left);
+    const y = Math.round(event.pageY - rect.top);
     if (!isLoading) {
       isMouseDown = false;
+    }
+    if (tool === "line") {
+      redrawCanvas();
+      drawLine(prevX, prevY, x, y, color);
     }
     prevX = -1;
     prevY = -1;

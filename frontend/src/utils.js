@@ -112,8 +112,25 @@ function getRGB(c) {
   }
 }
 
+function debounce({func, immediate, wait})
+{
+  let timerId;
+  return function (...args) {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    if(args[0]?.persist)
+      args[0].persist();
+    if(immediate) immediate(...args);
+    timerId = setTimeout(() => {
+      func(...args);
+      timerId = null;
+    }, wait);
+  };
+}
 
 export {
   getPointsBetweenTwoPoints,
-  getRGB
+  getRGB,
+  debounce
 };
