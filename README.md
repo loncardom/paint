@@ -5,7 +5,7 @@
 </p>
 
 
-A Windows 98 clone of Microsoft Paint built for the web with support for multiplayer.
+A clone of Microsoft Paint for Windows 98 built for the web with support for multiplayer.
 
 
 ## Docker Deployment
